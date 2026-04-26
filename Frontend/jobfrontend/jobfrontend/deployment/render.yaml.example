@@ -1,0 +1,26 @@
+# Copy to your backend repo as render.yaml (or paste into Render Dashboard → Blueprint).
+# Adjust name, branch, build/start commands, and env vars to match your API.
+#
+# After deploy, set the frontend env VITE_API_BASE_URL to:
+#   https://<this-service-name>.onrender.com/api
+# (or your custom domain + /api if routes are mounted there.)
+#
+# CORS: allow your Netlify/Vercel site origin (e.g. https://your-app.netlify.app).
+
+services:
+  - type: web
+    name: job-portal-api
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm ci
+    startCommand: npm start
+    # healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      # Render sets PORT automatically — use process.env.PORT in your server.
+      # - key: DATABASE_URL
+      #   sync: false
+      # - key: JWT_SECRET
+      #   sync: false

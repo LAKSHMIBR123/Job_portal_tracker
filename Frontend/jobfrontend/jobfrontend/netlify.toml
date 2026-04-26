@@ -1,0 +1,14 @@
+# Use this file when the Netlify site is linked to the jobfrontend repo root.
+# Build runs inside job-portal-frontend; publish path is relative to that base.
+[build]
+  base = "job-portal-frontend"
+  command = "npm run build"
+  publish = "dist"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[build.environment]
+  NODE_VERSION = "20"
