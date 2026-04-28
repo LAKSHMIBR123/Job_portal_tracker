@@ -200,8 +200,11 @@ const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const normalizedEmail = normalizeEmail(email);
 
+  console.log(`[login] Attempting login for email: ${normalizedEmail}`);
   const user = await User.findOne({ email: normalizedEmail });
+  
   if (!user) {
+    console.warn(`[login] User not found: ${normalizedEmail}`);
     return res.status(401).json({
       success: false,
       message: "Invalid email or password",
@@ -211,6 +214,7 @@ const login = asyncHandler(async (req, res) => {
 
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
+    console.warn(`[login] Password mismatch for user: ${normalizedEmail}`);
     return res.status(401).json({
       success: false,
       message: "Invalid email or password",
