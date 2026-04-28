@@ -13,21 +13,37 @@ export function getApiBaseUrl() {
   const configuredBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
   if (typeof configuredBaseUrl === 'string' && configuredBaseUrl.trim()) {
-    return configuredBaseUrl.trim().replace(/\/+$/, '');
+    const url = configuredBaseUrl.trim().replace(/\/+$/, '');
+    console.log(`[API] Using Base URL (Configured): ${url}`);
+    return url;
   }
 
   // Vitest runs in Node; call the backend directly (no Vite proxy).
   if (import.meta.env.MODE === 'test') {
-    return 'http://localhost:5000/api';
+    const url = 'http://localhost:5000/api';
+    console.log(`[API] Using Base URL (Test): ${url}`);
+    return url;
   }
 
   // Dev server: same-origin /api so Vite proxies to the backend (vite.config.js).
-  // Vitest runs with DEV=true but MODE=test — use absolute URL there.
   if (import.meta.env.DEV && import.meta.env.MODE !== 'test') {
-    return '/api';
+    const url = '/api';
+    console.log(`[API] Using Base URL (Dev Proxy): ${url}`);
+    return url;
   }
 
-  return 'http://localhost:5000/api';
+  // Production fallback
+  const productionUrl = 'https://job-portal-tracker-backend.onrender.com/api';
+  
+  // If we are in production and the current configured URL is localhost, override it
+  if (import.meta.env.PROD && typeof configuredBaseUrl === 'string' && configuredBaseUrl.includes('localhost')) {
+    console.warn(`[API] Production build detected but VITE_API_BASE_URL is set to localhost. Overriding with production URL: ${productionUrl}`);
+    return productionUrl;
+  }
+
+  const url = configuredBaseUrl || productionUrl;
+  console.log(`[API] Using Base URL: ${url}`);
+  return url;
 }
 
 function getStoredToken() {
